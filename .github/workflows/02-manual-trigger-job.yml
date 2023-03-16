@@ -14,6 +14,6 @@ jobs:
     - name: Azure login
       run: az login --service-principal -u ${{secrets.AZURE_CLIENT_ID}} -p ${{secrets.AZURE_CLIENT_PASSWORD}} --tenant ${{secrets.AZURE_TENANT_ID}}
     - name: Submit a Machine Learning Job
-      run: az ml job create --file ../../src/job.yml --resource-group AI-ML_RG --workspace-name ml-workspace
+      run: az ml job create job.yml --resource-group AI-ML_RG --workspace-name ml-workspace
 
 
