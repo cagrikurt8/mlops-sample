@@ -1,4 +1,4 @@
-name: Manually trigger an Azure Machine Learning job
+name: Manually trigger an Azure Machine Learning job and Deploy Model
 
 on:
   workflow_dispatch:
@@ -15,5 +15,9 @@ jobs:
       run: az login --service-principal -u ${{secrets.AZURE_CLIENT_ID}} -p ${{secrets.AZURE_CLIENT_PASSWORD}} --tenant ${{secrets.AZURE_TENANT_ID}}
     - name: Submit a Machine Learning Job
       run: az ml job create --file ./src/job.yml --resource-group AI-ML_RG --workspace-name ml-workspace
+    - name: Create an Online Endpoint
+      run: az ml online-endpoint create --file ./src/endpoint.yml --resource-group AI-ML_RG --workspace-name ml-workspace
+    - name: Create an Online Deployment
+      run: az ml online-deployment --file ./src/deployment.yml --resource-group AI-ML_RG --workspace-name ml-workspace
 
 

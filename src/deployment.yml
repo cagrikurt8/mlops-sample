@@ -1,0 +1,11 @@
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
+name: blue
+endpoint_name: mlops-diabetes-endpoint
+model:
+  path: azureml:mlops-model@latest
+code_configuration:
+  code: ./onlinescoring/
+  scoring_script: score.py
+environment: azureml:deployment-env@latest
+instance_type: Standard_DS2_v2
+instance_count: 1
