@@ -8,7 +8,10 @@ import mlflow
 import pandas as pd
 
 from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, roc_auc_score
 
 
 # define functions
@@ -38,13 +41,22 @@ def get_csvs_df(path):
 # TO DO: add function to split data
 
 def split_data(df):
+    df = df.drop("PatientID", axis=1)
     X, y = df.drop("Diabetic", axis=1).values, df["Diabetic"].values
     
     return train_test_split(X, y, test_size=0.3, random_state=0)
 
+
 def train_model(reg_rate, X_train, X_test, y_train, y_test):
     # train model
-    LogisticRegression(C=1/reg_rate, solver="liblinear").fit(X_train, y_train)
+    
+    model = LogisticRegression(C=1/reg_rate, solver="liblinear")
+    pipeline = make_pipeline(MinMaxScaler(), model)
+    pipeline.fit(X_train, y_train)
+    y_hat = pipeline.predict(X_test)
+    accuracy_score(y_test, y_hat)
+    y_scores = pipeline.predict_proba(X_test)
+    roc_auc_score(y_test,y_scores[:,1])
 
 
 def parse_args():
