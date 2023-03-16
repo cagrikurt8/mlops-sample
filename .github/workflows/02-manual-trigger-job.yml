@@ -18,6 +18,6 @@ jobs:
     - name: Create an Online Endpoint
       run: az ml online-endpoint create --file ./src/endpoint.yml --resource-group AI-ML_RG --workspace-name ml-workspace
     - name: Create an Online Deployment
-      run: az ml online-deployment --file ./src/deployment.yml --resource-group AI-ML_RG --workspace-name ml-workspace
+      run: az ml online-deployment create --file ./src/deployment.yml --resource-group AI-ML_RG --workspace-name ml-workspace
 
 
