@@ -58,6 +58,17 @@ def train_model(reg_rate, X_train, X_test, y_train, y_test):
     y_scores = pipeline.predict_proba(X_test)
     roc_auc_score(y_test,y_scores[:,1])
 
+    log_model(pipeline, "mlops-model")
+
+
+def log_model(model, model_name):
+
+    mlflow.sklearn.log_model(
+        sk_model=model,
+        registered_model_name=model_name,
+        artifact_path=model_name
+    )
+
 
 def parse_args():
     # setup arg parser
