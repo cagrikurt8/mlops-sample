@@ -17,7 +17,8 @@ from sklearn.metrics import accuracy_score, roc_auc_score
 # define functions
 def main(args):
     # TO DO: enable autologging
-    mlflow.autolog()
+    mlflow.sklearn.autolog(log_input_examples=True,
+                           registered_model_name="mlops-model")
 
     # read data
     df = get_csvs_df(args.training_data)
@@ -57,18 +58,7 @@ def train_model(reg_rate, X_train, X_test, y_train, y_test):
     accuracy_score(y_test, y_hat)
     y_scores = pipeline.predict_proba(X_test)
     roc_auc_score(y_test,y_scores[:,1])
-
-    log_model(pipeline, "mlops-model")
-
-
-def log_model(model, model_name):
-
-    mlflow.sklearn.log_model(
-        sk_model=model,
-        registered_model_name=model_name,
-        artifact_path=model_name
-    )
-
+    
 
 def parse_args():
     # setup arg parser
