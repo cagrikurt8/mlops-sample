@@ -1,8 +1,7 @@
 $schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
 name: blue
 endpoint_name: mlops-diabetes-endpoint
-model:
-  path: azureml:mlops-model@latest
+model: azureml:mlops-model@latest
 code_configuration:
   code: ./onlinescoring/
   scoring_script: score.py
