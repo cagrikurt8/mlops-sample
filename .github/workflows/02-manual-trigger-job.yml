@@ -26,6 +26,11 @@ jobs:
       if: steps.online-endpoint.outcome == 'success'
       run: echo "endpoint created"
     - name: Create an Online Deployment
+      id: online-deployment
       run: az ml online-deployment create --file ./src/deployment.yml --resource-group AI-ML_RG --workspace-name ml-workspace
+      continue-on-error: true
+    - name: Update the Online Deployment
+      if: steps.online-deployment.outcome == 'failure'
+      run: az ml online-deployment update --file ./src/deployment.yml --resource-group AI-ML_RG --workspace-name ml-workspace
 
 
