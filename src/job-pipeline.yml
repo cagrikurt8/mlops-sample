@@ -9,7 +9,7 @@ inputs:
 jobs:
   test_data:
     code: test-data
-    command: python test_data.py ${{inputs.training_data}}
+    command: python test_data.py ${{inputs.test_data_path}}
     environment: azureml:train-env@latest
     compute: azureml:aks-cluster
     inputs:
