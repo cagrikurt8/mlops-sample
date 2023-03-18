@@ -1,6 +1,11 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
 display_name: test_data_and_train_model
+
+inputs:
+  test_data_folder:
+    type: uri_folder
+    path: azureml://datastores/workspaceblobstore/paths/
 jobs:
   test_data:
     code: test-data
@@ -8,19 +13,15 @@ jobs:
     environment: azureml:train-env@latest
     compute: azureml:aks-cluster
     inputs:
-      training_data:
-        type: uri_folder 
-        path: azureml://datastores/workspaceblobstore/paths/
-    outputs:
-      test_data_path: ${{inputs.training_data}}
+      test_data_path = ${{parent.inputs.test_data_folder}}
   register_data:
     command: az ml data create --name diabetes-mlops-data --path ${{inputs.training_data}} --resource-group AI-ML_RG --workspace-name ml-workspace
     environment: azureml:train-env@latest
     compute: azureml:aks-cluster
     inputs:
-      training_data: ${{parent.jobs.test_data.outputs.test_data_path}}
+      training_data: ${{parent.jobs.inputs.test_data_folder}}
     outputs:
-      register_data_output: ${{inputs.training_data}}
+      register_data_output:
   train_model:
     code: model
     command: python train.py --training-data ${{inputs.training_data}} --reg-rate ${{inputs.reg_rate}}
