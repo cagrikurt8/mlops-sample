@@ -19,7 +19,7 @@ jobs:
     environment: azureml:train-env@latest
     compute: azureml:aks-cluster
     inputs:
-      training_data: ${{parent.jobs.inputs.test_data_folder}}
+      training_data: ${{parent.inputs.test_data_folder}}
     outputs:
       register_data_output:
   train_model:
