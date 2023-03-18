@@ -3,7 +3,7 @@ type: pipeline
 display_name: test_data_and_train_model
 jobs:
   test_data:
-    code: ./test-data
+    code: test-data
     command: python test_data.py ${{inputs.training_data}}
     environment: azureml:train-env@latest
     compute: azureml:aks-cluster
@@ -22,7 +22,7 @@ jobs:
     outputs:
       register_data_output:
   train_model:
-    code: ./src
+    code: model
     command: python train.py --training-data ${{intpus.training_data}} --reg-rate ${{inputs.reg_rate}}
     inputs:
       training_data:
