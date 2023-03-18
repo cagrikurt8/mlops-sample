@@ -1,0 +1,36 @@
+name: Manually trigger an Azure Machine Learning job and Deploy Model
+
+on:
+  workflow_dispatch:
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out repo
+      uses: actions/checkout@main
+    - name: Install az ml extension
+      run: az extension add -n ml -y
+    - name: Azure login
+      run: az login --service-principal -u ${{secrets.AZURE_CLIENT_ID}} -p ${{secrets.AZURE_CLIENT_PASSWORD}} --tenant ${{secrets.AZURE_TENANT_ID}}
+    - name: Submit a Machine Learning Job
+      run: az ml job create --file ./src/job-pipeline.yml --resource-group AI-ML_RG --workspace-name ml-workspace --stream -s
+    - name: Create an Online Endpoint
+      id: online-endpoint
+      run: az ml online-endpoint create --file ./src/kubernetes-endpoint.yml --resource-group AI-ML_RG --workspace-name ml-workspace
+      continue-on-error: true
+    - name: Online Endpoint exists print
+      if: steps.online-endpoint.outcome == 'failure'
+      run: echo "endpoint exists"
+    - name: Online Endpoint created print
+      if: steps.online-endpoint.outcome == 'success'
+      run: echo "endpoint created"
+    - name: Create an Online Deployment
+      id: online-deployment
+      run: az ml online-deployment create --file ./src/kubernetes-deployment.yml --resource-group AI-ML_RG --workspace-name ml-workspace
+      continue-on-error: true
+    - name: Update the Online Deployment
+      if: steps.online-deployment.outcome == 'failure'
+      run: az ml online-deployment update --file ./src/kubernetes-deployment.yml --resource-group AI-ML_RG --workspace-name ml-workspace
+
+
