@@ -12,7 +12,7 @@ jobs:
         type: uri_folder 
         path: azureml://datastores/workspaceblobstore/paths/
     outputs:
-      test_data_path: ${{parent.inputs.training_data}}
+      test_data_path: ${{inputs.training_data}}
   register_data:
     command: az ml data create --name diabetes-mlops-data --path ${{inputs.training_data}} --resource-group AI-ML_RG --workspace-name ml-workspace
     environment: azureml:train-env@latest
@@ -20,14 +20,12 @@ jobs:
     inputs:
       training_data: ${{parent.jobs.test_data.outputs.test_data_path}}
     outputs:
-      register_data_output:
+      register_data_output: ${{inputs.training_data}}
   train_model:
     code: model
     command: python train.py --training-data ${{inputs.training_data}} --reg-rate ${{inputs.reg_rate}}
     inputs:
-      training_data:
-        type: uri_folder
-        path: ${{parent.jobs.register_data.outputs.register_data_output}}
+      training_data: ${{parent.jobs.register_data.outputs.register_data_output}}
       reg_rate: 0.01
     environment: azureml:train-env@latest
     compute: azureml:aks-cluster
