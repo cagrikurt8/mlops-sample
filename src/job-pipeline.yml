@@ -12,7 +12,7 @@ jobs:
         type: uri_folder 
         path: azureml://datastores/workspaceblobstore/paths/
     outputs:
-      test_data_path: ${{parent.inputs.training_data.path}}
+      test_data_path: ${{parent.inputs.training_data}}
   register_data:
     command: az ml data create --name diabetes-mlops-data --path ${{inputs.training_data}} --resource-group AI-ML_RG --workspace-name ml-workspace
     environment: azureml:train-env@latest
