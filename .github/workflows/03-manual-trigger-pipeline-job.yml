@@ -36,5 +36,5 @@ jobs:
     - name: Update the Online Deployment
       if: steps.online-deployment.outcome == 'failure'
       run: az ml online-deployment update --file ./src/kubernetes-deployment.yml --resource-group AI-ML_RG --workspace-name ml-workspace
-
-
+    - name: Update the traffic
+      run: az ml online-endpoint update --file ./src/kubernetes-endpoint-update.yml --resource-group AI-ML_RG --workspace-name ml-workspace

@@ -1,5 +1,5 @@
 $schema: https://azuremlschemas.azureedge.net/latest/kubernetesOnlineDeployment.schema.json
-name: blue
+name: green
 type: kubernetes
 endpoint_name: aks-mlops-endpoint
 model: azureml:mlops-model@latest
