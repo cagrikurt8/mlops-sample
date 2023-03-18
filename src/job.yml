@@ -7,7 +7,7 @@ command: >-
 inputs:
   training_data: 
     type: uri_folder 
-    path: azureml://datastores/workspaceblobstore/paths/LocalUpload/a5b05a17f213e8e12e54948a8e3d1dfa/data/
+    path: azureml://datastores/workspaceblobstore/paths/
   reg_rate: 0.01
 environment: azureml:train-env@latest
 compute: azureml:aks-cluster
