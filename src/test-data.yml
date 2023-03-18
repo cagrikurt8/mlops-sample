@@ -1,0 +1,9 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+code: test-data
+command: python test_data.py --test_data ${{inputs.test_data_path}}
+environment: azureml:train-env:2
+compute: azureml:aks-cluster
+inputs:
+  test_data_path: 
+    type: uri_folder
+    path: azureml://datastores/workspaceblobstore/paths/

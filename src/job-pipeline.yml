@@ -7,13 +7,6 @@ inputs:
     type: uri_folder
     path: azureml://datastores/workspaceblobstore/paths/
 jobs:
-  test_data:
-    code: test-data
-    command: python test_data.py --test_data ${{inputs.test_data_path}}
-    environment: azureml:train-env:2
-    compute: azureml:aks-cluster
-    inputs:
-      test_data_path: ${{parent.inputs.test_data_folder}}
   register_data:
     code: register-data
     command: python register_data_v1.py --data_path ${{inputs.training_data}} --subscription_id ${{secrets.AZURE_SUBSCRIPTION_ID}}
