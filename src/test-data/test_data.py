@@ -8,7 +8,7 @@ import pandas as pd
 
 # define functions
 def main(args):
-    df = get_csvs_df(args.training_data)
+    df = get_csvs_df(args.test_data)
 
     assert df.columns.tolist() == ["PatientID", "Pregnancies", "PlasmaGlucose", "DiastolicBloodPressure", "TricepsThickness", "SerumInsulin", "BMI", "DiabetesPedigree", "Age", "Diabetic"], "The CSV file doesn't contain the expected columns."
 
@@ -27,7 +27,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     # add arguments
-    parser.add_argument("--training_data", dest='training_data',
+    parser.add_argument("--test_data", dest='test_data',
                         type=str)
 
     # parse args

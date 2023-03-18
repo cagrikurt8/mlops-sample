@@ -9,7 +9,7 @@ inputs:
 jobs:
   test_data:
     code: test-data
-    command: python test_data.py ${{inputs.test_data_path}}
+    command: python test_data.py --test_data ${{inputs.test_data_path}}
     environment: azureml:train-env@latest
     compute: azureml:aks-cluster
     inputs:
@@ -24,7 +24,7 @@ jobs:
       register_data_output:
   train_model:
     code: model
-    command: python train.py --training-data ${{inputs.training_data}} --reg-rate ${{inputs.reg_rate}}
+    command: python train.py --training_data ${{inputs.training_data}} --reg_rate ${{inputs.reg_rate}}
     inputs:
       training_data: ${{parent.jobs.register_data.outputs.register_data_output}}
       reg_rate: 0.01
