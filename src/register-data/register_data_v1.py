@@ -7,7 +7,9 @@ from azureml.core import Workspace, Dataset
 
 # define functions
 def main(args):
-    ml_client = Workspace.from_config()
+    ml_client = Workspace(subscription_id=args.subscription_id,
+                          resource_group="AI-ML_RG",
+                          workspace_name="ml-workspace")
 
     data_folder = Dataset.File.from_files(path=args.data_path)
     data_folder.register(workspace=ml_client,
@@ -21,6 +23,9 @@ def parse_args():
 
     # add arguments
     parser.add_argument("--data_path", dest='data_path',
+                        type=str)
+    
+    parser.add_argument("--subscription_id", dest='data_path',
                         type=str)
 
     # parse args
