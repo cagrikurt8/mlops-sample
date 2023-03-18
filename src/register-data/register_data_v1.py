@@ -2,24 +2,17 @@
 
 import argparse
 import logging
-from azure.ai.ml import MLClient
-from azure.identity import DefaultAzureCredential
-from azure.ai.ml.constants import AssetTypes
-from azure.ai.ml.entities import Data
+from azureml.core import Workspace, Dataset
 
 
 # define functions
 def main(args):
-    data = Data(
-        path=args.data_path,
-        type=AssetTypes.URI_FOLDER,
-        description="MLOps diabetes data",
-        name="diabetes-mlops-dataset"
-    )
-    ml_client = MLClient.from_config(DefaultAzureCredential())
-    ml_client.data.create_or_update(data)
+    ml_client = Workspace.from_config()
 
-    logging.debug(args.data_path)
+    data_folder = Dataset.File.from_files(path=args.data_path)
+    data_folder.register(workspace=ml_client,
+                         name="diabetes-mlops-folder",
+                         create_new_version=True)
 
 
 def parse_args():

@@ -16,7 +16,7 @@ jobs:
       test_data_path: ${{parent.inputs.test_data_folder}}
   register_data:
     code: register-data
-    command: python register_data.py --data_path ${{inputs.training_data}}
+    command: python register_data_v1.py --data_path ${{inputs.training_data}}
     environment: azureml:train-env@latest
     compute: azureml:aks-cluster
     inputs:
