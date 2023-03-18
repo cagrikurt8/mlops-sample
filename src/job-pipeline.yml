@@ -23,7 +23,7 @@ jobs:
       register_data_output:
   train_model:
     code: model
-    command: python train.py --training-data ${{intpus.training_data}} --reg-rate ${{inputs.reg_rate}}
+    command: python train.py --training-data ${{inputs.training_data}} --reg-rate ${{inputs.reg_rate}}
     inputs:
       training_data:
         type: uri_folder
