@@ -27,7 +27,7 @@ jobs:
     inputs:
       training_data:
         type: uri_folder
-        path: ${{parent.jobs.register_data.outputs.register_data_output['path']}}
+        path: ${{parent.jobs.register_data.outputs.register_data_output}}.path
       reg_rate: 0.01
     environment: azureml:train-env@latest
     compute: azureml:aks-cluster
