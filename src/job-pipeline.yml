@@ -13,7 +13,7 @@ jobs:
     environment: azureml:train-env@latest
     compute: azureml:aks-cluster
     inputs:
-      test_data_path = ${{parent.inputs.test_data_folder}}
+      test_data_path: ${{parent.inputs.test_data_folder}}
   register_data:
     command: az ml data create --name diabetes-mlops-data --path ${{inputs.training_data}} --resource-group AI-ML_RG --workspace-name ml-workspace
     environment: azureml:train-env@latest
