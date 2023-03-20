@@ -1,0 +1,38 @@
+name: Manually trigger a Data Test, an Azure Machine Learning Pipeline job and Deploy Model
+
+on:
+  workflow_dispatch:
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out repo
+      uses: actions/checkout@main
+    - name: Install az ml extension
+      run: az extension add -n ml -y
+    - name: Azure login
+      run: az login --service-principal -u ${{secrets.AZURE_CLIENT_ID}} -p ${{secrets.AZURE_CLIENT_PASSWORD}} --tenant ${{secrets.AZURE_TENANT_ID}}
+    - name: Check Deployments
+      id: check-deployments
+      run: az ml online-endpoint show --name aks-mlops-endpoint --resource-group AI-ML_RG --workspace-name ml-workspace
+    - name: Check Deployments print
+      run: echo steps.check-deployments.outputs
+    - name: Create an Online Deployment Blue
+      if: steps.check-deployments.outputs.traffic.green == 100
+      run: az ml online-deployment create --file ./src/kubernetes-blue-deployment.yml --resource-group AI-ML_RG --workspace-name ml-workspace
+    - name: Update the traffic Blue
+      if: steps.check-deployments.outputs.traffic.green == 100
+      run: az ml online-endpoint update --file ./src/kubernetes-blue-endpoint-update.yml --resource-group AI-ML_RG --workspace-name ml-workspace
+    - name: Create an Online Deployment Green
+      if: steps.check-deployments.outputs.traffic.blue == 100
+      run: az ml online-deployment create --file ./src/kubernetes-green-deployment.yml --resource-group AI-ML_RG --workspace-name ml-workspace
+    - name: Update the traffic Green
+      if: steps.check-deployments.outputs.traffic.blue == 100
+      run: az ml online-endpoint update --file ./src/kubernetes-green-endpoint-update.yml --resource-group AI-ML_RG --workspace-name ml-workspace
+    - name: Delete Deployment Blue
+      if: steps.check-deployments.outputs.traffic.green == 100
+      run: az ml online-deployment delete --endpoint-name aks-mlops-endpoint --name blue --resource-group AI-ML_RG --workspace-name ml-workspace --yes
+    - name: Delete Deployment Green
+      if: steps.check-deployments.outputs.traffic.blue == 100
+      run: az ml online-deployment delete --endpoint-name aks-mlops-endpoint --name green --resource-group AI-ML_RG --workspace-name ml-workspace --yes
