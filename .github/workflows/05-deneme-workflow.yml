@@ -15,9 +15,9 @@ jobs:
       run: az login --service-principal -u ${{secrets.AZURE_CLIENT_ID}} -p ${{secrets.AZURE_CLIENT_PASSWORD}} --tenant ${{secrets.AZURE_TENANT_ID}}
     - name: Check Deployments
       id: check-deployments
-      run: az ml online-endpoint show --name aks-mlops-endpoint --resource-group AI-ML_RG --workspace-name ml-workspace
+      run: az ml online-endpoint show --name aks-mlops-endpoint --resource-group AI-ML_RG --workspace-name ml-workspace --output -o
     - name: Check Deployments print
-      run: echo "${{steps.check-deployments.outcome}}"
+      run: echo "${{steps.check-deployments.outputs}}"
     - name: Create an Online Deployment Blue
       if: steps.check-deployments.outputs.traffic.green == 100
       run: az ml online-deployment create --file ./src/kubernetes-blue-deployment.yml --resource-group AI-ML_RG --workspace-name ml-workspace
