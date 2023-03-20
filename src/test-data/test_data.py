@@ -4,7 +4,6 @@ import argparse
 import glob
 import os
 import pandas as pd
-import logging
 
 
 # define functions
@@ -13,7 +12,6 @@ def main(args):
 
     assert df.columns.tolist() == ["PatientID", "Pregnancies", "PlasmaGlucose", "DiastolicBloodPressure", "TricepsThickness", "SerumInsulin", "BMI", "DiabetesPedigree", "Age", "Diabetic"], "The CSV file doesn't contain the expected columns."
 
-    logging.debug(msg=args.test_data)
 
 def get_csvs_df(path):
     if not os.path.exists(path):
