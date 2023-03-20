@@ -1,5 +1,6 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
+experiment_name: mlops-diabetes-training
 display_name: test_data_and_train_model
 
 inputs:
@@ -7,22 +8,22 @@ inputs:
     type: uri_folder
     path: azureml://datastores/workspaceblobstore/paths/
 jobs:
-  register_data:
-    code: register-data
-    command: python register_data_v1.py --data_path ${{inputs.training_data}} --subscription_id ${{secrets.AZURE_SUBSCRIPTION_ID}}
+  test_data:
+    code: test-data
+    command: python test_data.py --test_data ${{inputs.training_data}}
     environment: azureml:train-env:2
     compute: azureml:aks-cluster
     inputs:
       training_data: ${{parent.inputs.test_data_folder}}
-    outputs:
-      register_data_output:
+    description: Test the train data whether the columns are as expected.
+    display_name: test_data
   train_model:
     code: model
     command: python train.py --training_data ${{inputs.training_data}} --reg_rate ${{inputs.reg_rate}}
     inputs:
-      training_data: ${{parent.jobs.register_data.outputs.register_data_output}}
+      training_data: ${{parent.inputs.test_data_folder}}
       reg_rate: 0.01
-    environment: azureml:train-env:2
+    environment: azureml:train-env@latest
     compute: azureml:aks-cluster
-    experiment_name: mlops-diabetes-training
     description: Train a LR model with YML
+    display_name: train_model
