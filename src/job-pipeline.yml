@@ -18,7 +18,7 @@ jobs:
     description: Test the train data whether the columns are as expected.
     display_name: test_data
     outputs:
-        test_data_output: ${{inputs.training_data}}
+        test_data_output: ${{parent.inputs.test_data_folder}}
   train_model:
     code: model
     command: python train.py --training_data ${{inputs.training_data}} --reg_rate ${{inputs.reg_rate}}
