@@ -6,7 +6,7 @@ display_name: test_data_and_train_model
 inputs:
   test_data_folder:
     type: uri_folder
-    path: azureml://datastores/workspaceblobstore/paths/
+    path: azureml://datastores/workspaceblobstore/
 jobs:
   test_data:
     code: test-data
