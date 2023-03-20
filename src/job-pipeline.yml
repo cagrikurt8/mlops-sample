@@ -17,13 +17,11 @@ jobs:
       training_data: ${{parent.inputs.test_data_folder}}
     description: Test the train data whether the columns are as expected.
     display_name: test_data
-    outputs:
-        test_data_output: ${{parent.inputs.test_data_folder}}
   train_model:
     code: model
     command: python train.py --training_data ${{inputs.training_data}} --reg_rate ${{inputs.reg_rate}}
     inputs:
-      training_data: ${{parent.jobs.test_data.outputs.test_data_output}}
+      training_data: ${{parent.inputs.test_data_folder}}
       reg_rate: 0.01
     environment: azureml:train-env@latest
     compute: azureml:aks-cluster
