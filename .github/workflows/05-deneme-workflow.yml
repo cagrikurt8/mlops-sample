@@ -13,8 +13,11 @@ jobs:
       run: az extension add -n ml -y
     - name: Azure login
       run: az login --service-principal -u ${{secrets.AZURE_CLIENT_ID}} -p ${{secrets.AZURE_CLIENT_PASSWORD}} --tenant ${{secrets.AZURE_TENANT_ID}}
-    - name: Workspace Show
-      id: workspace-output
-      run: az ml workspace show --name aml-workspace --resource-group AI-ML_RG > at.json
-    - name: Workspace Print
-      run: echo "$(jq '.location' at.json)"
+    - name: Check Deployments
+      id: check-deployments
+      run: |
+           az ml online-endpoint show --name aks-mlops-endpoint --resource-group AI-ML_RG --workspace-name aml-workspace > at.json
+           echo "TRAFFIC=$(jq '.traffic' at.json)" >> $GITHUB_ENV
+    - name: Create the first Deployment
+      run: echo "${{env.TRAFFIC}}"
+      #if: (contains('blue', ${{env.TRAFFIC}}) == false) && (contains('green', ${{env.TRAFFIC}}) == false)
