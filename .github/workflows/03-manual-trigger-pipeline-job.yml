@@ -33,6 +33,10 @@ jobs:
            az ml online-endpoint show --name aks-mlops-endpoint --resource-group AI-ML_RG --workspace-name aml-workspace > at.json
            echo "BLUE=$(jq '.traffic.blue' at.json)" >> $GITHUB_ENV
            echo "GREEN=$(jq '.traffic.green' at.json)" >> $GITHUB_ENV
+    - name: Print Deployments
+      run: |
+            echo "${{ env.BLUE }}"
+            echo "${{ env.GREEN }}"
     - name: Create the first Deployment
       if: ${{ env.BLUE }} == ${{ null }} && ${{ env.GREEN }} == ${{ null }}
       run: |
