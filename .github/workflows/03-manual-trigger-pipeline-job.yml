@@ -31,23 +31,23 @@ jobs:
       id: check-deployments
       run: az ml online-endpoint show --name aks-mlops-endpoint --resource-group AI-ML_RG --workspace-name aml-workspace > at.json
     - name: Create the first Deployment
-      if: (contains('blue', $(jq '.traffic' at.json)) == false) && (contains('green', $(jq '.traffic' at.json)) == false)
+      if: (contains('blue', ${{jq '.traffic' at.json}}) == false) && (contains('green', ${{jq '.traffic' at.json}}) == false)
       run: |
            az ml online-deployment create --file ./src/kubernetes-blue-deployment.yml --resource-group AI-ML_RG --workspace-name aml-workspace
            az ml online-endpoint update --file ./src/kubernetes-blue-endpoint-update.yml --resource-group AI-ML_RG --workspace-name aml-workspace
     - name: Create an Online Deployment Blue
-      if: $(jq '.traffic.green' at.json) == 100
+      if: ${{jq '.traffic.green' at.json}} == 100
       run: |
            az ml online-deployment create --file ./src/kubernetes-blue-deployment.yml --resource-group AI-ML_RG --workspace-name aml-workspace
            az ml online-endpoint update --file ./src/kubernetes-blue-endpoint-update.yml --resource-group AI-ML_RG --workspace-name aml-workspace
     - name: Create an Online Deployment Green
-      if: $(jq '.traffic.blue' at.json) == 100
+      if: ${{jq '.traffic.blue' at.json}} == 100
       run: |
            az ml online-deployment create --file ./src/kubernetes-green-deployment.yml --resource-group AI-ML_RG --workspace-name aml-workspace
            az ml online-endpoint update --file ./src/kubernetes-green-endpoint-update.yml --resource-group AI-ML_RG --workspace-name aml-workspace
     - name: Delete Deployment Blue
-      if: $(jq '.traffic.green' at.json) == 100
+      if: ${{jq '.traffic.green' at.json}} == 100
       run: az ml online-deployment delete --endpoint-name aks-mlops-endpoint --name blue --resource-group AI-ML_RG --workspace-name aml-workspace --yes
     - name: Delete Deployment Green
-      if: $(jq '.traffic.blue' at.json) == 100
+      if: ${{jq '.traffic.blue' at.json}} == 100
       run: az ml online-deployment delete --endpoint-name aks-mlops-endpoint --name green --resource-group AI-ML_RG --workspace-name aml-workspace --yes
