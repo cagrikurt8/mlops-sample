@@ -23,11 +23,18 @@ def main(args):
     # read data
     df = get_csvs_df(args.training_data)
 
+    # test data
+    test_data(df)
+    
     # split data
     X_train, X_test, y_train, y_test = split_data(df)
 
     # train model
     train_model(args.reg_rate, X_train, X_test, y_train, y_test)
+
+
+def test_data(df):
+    assert df.columns.tolist() == ["PatientID", "Pregnancies", "PlasmaGlucose", "DiastolicBloodPressure", "TricepsThickness", "SerumInsulin", "BMI", "DiabetesPedigree", "Age", "Diabetic"], "The CSV file doesn't contain the expected columns."
 
 
 def get_csvs_df(path):

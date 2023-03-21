@@ -16,7 +16,7 @@ jobs:
     - name: Register dataset
       run: az ml data create --file ./src/data.yml --resource-group AI-ML_RG --workspace-name aml-workspace
     - name: Test Data and Submit a Machine Learning Job
-      run: az ml job create --file ./src/job-pipeline.yml --resource-group AI-ML_RG --workspace-name aml-workspace --stream -s
+      run: az ml job create --file ./src/job.yml --resource-group AI-ML_RG --workspace-name aml-workspace --stream -s
     - name: Create an Online Endpoint
       id: online-endpoint
       run: az ml online-endpoint create --file ./src/kubernetes-endpoint.yml --resource-group AI-ML_RG --workspace-name aml-workspace
