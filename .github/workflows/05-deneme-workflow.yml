@@ -17,4 +17,4 @@ jobs:
       id: workspace-output
       run: output=$(az ml workspace show --name aml-workspace --resource-group AI-ML_RG)
     - name: Workspace Print
-      run: echo "${{steps.workspace-output.outputs.output}}"
+      run: echo "${{steps.workspace-output.outputs}}"
