@@ -20,6 +20,8 @@ jobs:
            echo "BLUE=$(jq '.traffic.blue' at.json)" >> $GITHUB_ENV
            echo "GREEN=$(jq '.traffic.green' at.json)" >> $GITHUB_ENV
     - name: Create the first Deployment
+      if: ${{env.BLUE}} == null 
       run: |
-            echo "$(if((${{env.BLUE}} == null) && (${{env.GREEN}} == null)))"
+            echo "${{env.BLUE}}"
+            echo "${{env.GREEN}}"
       #if: (contains('blue', ${{env.TRAFFIC}}) == false) && (contains('green', ${{env.TRAFFIC}}) == false)
