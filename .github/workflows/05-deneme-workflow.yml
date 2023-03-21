@@ -17,7 +17,7 @@ jobs:
       id: check-deployments
       run: |
            az ml online-endpoint show --name aks-mlops-endpoint --resource-group AI-ML_RG --workspace-name aml-workspace > at.json
-           echo "TRAFFIC=$(jq '.traffic' at.json)" >> $GITHUB_ENV
+           echo "TRAFFIC=$(jq '.traffic' at.json)" >> $GITHUB_OUTPUT
     - name: Create the first Deployment
-      run: echo "${{env.TRAFFIC}}"
+      run: echo "${{steps.check-deployments.outputs.TRAFFIC}}"
       #if: (contains('blue', ${{env.TRAFFIC}}) == false) && (contains('green', ${{env.TRAFFIC}}) == false)
