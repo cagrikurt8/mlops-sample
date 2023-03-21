@@ -1,4 +1,4 @@
-name: Manually trigger a Data Test, an Azure Machine Learning Pipeline job and Deploy Model
+name: Trial Workflow
 
 on:
   workflow_dispatch:
