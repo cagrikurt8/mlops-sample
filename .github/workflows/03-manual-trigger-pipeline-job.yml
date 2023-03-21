@@ -34,20 +34,22 @@ jobs:
            echo "BLUE=$(jq '.traffic.blue' at.json)" >> $GITHUB_ENV
            echo "GREEN=$(jq '.traffic.green' at.json)" >> $GITHUB_ENV
     - name: Create the first Deployment
-      if: ${{ (env.BLUE == 'null') }} && ${{ (env.GREEN == 'null') }}
+      if: (${{ env.BLUE }} == ${{ null }}) && (${{ env.GREEN }} == ${{ null }})
       run: |
            az ml online-deployment create --file ./src/kubernetes-blue-deployment.yml --resource-group AI-ML_RG --workspace-name aml-workspace
            az ml online-endpoint update --file ./src/kubernetes-blue-endpoint-update.yml --resource-group AI-ML_RG --workspace-name aml-workspace
     - name: Create an Online Deployment Blue
       if: ${{ (env.GREEN == 100) }}
-      run: |
-           az ml online-deployment create --file ./src/kubernetes-blue-deployment.yml --resource-group AI-ML_RG --workspace-name aml-workspace
-           az ml online-endpoint update --file ./src/kubernetes-blue-endpoint-update.yml --resource-group AI-ML_RG --workspace-name aml-workspace
+      run: az ml online-deployment create --file ./src/kubernetes-blue-deployment.yml --resource-group AI-ML_RG --workspace-name aml-workspace   
     - name: Create an Online Deployment Green
       if: ${{ (env.BLUE == 100) }}
-      run: |
-           az ml online-deployment create --file ./src/kubernetes-green-deployment.yml --resource-group AI-ML_RG --workspace-name aml-workspace
-           az ml online-endpoint update --file ./src/kubernetes-green-endpoint-update.yml --resource-group AI-ML_RG --workspace-name aml-workspace
+      run: az ml online-deployment create --file ./src/kubernetes-green-deployment.yml --resource-group AI-ML_RG --workspace-name aml-workspace
+    - name: Update Deployment Blue
+      if: ${{ (env.GREEN == 100) }}
+      run: az ml online-endpoint update --file ./src/kubernetes-blue-endpoint-update.yml --resource-group AI-ML_RG --workspace-name aml-workspace
+    - name: Update Deployment Green
+      if: ${{ (env.BLUE == 100) }}
+      run: az ml online-endpoint update --file ./src/kubernetes-green-endpoint-update.yml --resource-group AI-ML_RG --workspace-name aml-workspace
     - name: Delete Deployment Blue
       if: ${{ (env.GREEN == 100) }}
       run: az ml online-deployment delete --endpoint-name aks-mlops-endpoint --name blue --resource-group AI-ML_RG --workspace-name aml-workspace --yes
