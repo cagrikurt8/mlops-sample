@@ -28,7 +28,6 @@ jobs:
       if: steps.online-endpoint.outcome == 'success'
       run: echo "endpoint created"
     - name: Check Deployments
-      id: check-deployments
       run: |
            az ml online-endpoint show --name aks-mlops-endpoint --resource-group AI-ML_RG --workspace-name aml-workspace > at.json
            echo "BLUE=$(jq '.traffic.blue' at.json)" >> $GITHUB_ENV
