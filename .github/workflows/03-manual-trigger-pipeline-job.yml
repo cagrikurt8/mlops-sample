@@ -31,25 +31,26 @@ jobs:
       id: check-deployments
       run: |
            az ml online-endpoint show --name aks-mlops-endpoint --resource-group AI-ML_RG --workspace-name aml-workspace > at.json
-           echo "TRAFFIC=$(jq '.traffic' at.json)" >> $GITHUB_ENV
+           echo "BLUE=$(jq '.traffic.blue' at.json)" >> $GITHUB_ENV
+           echo "GREEN=$(jq '.traffic.green' at.json)" >> $GITHUB_ENV
     - name: Create the first Deployment
-      if: (contains('blue', ${{env.TRAFFIC}}) == false) && (contains('green', ${{env.TRAFFIC}}) == false)
+      if: ${{env.BLUE}} == null && ${{env.GREEN}} == null
       run: |
            az ml online-deployment create --file ./src/kubernetes-blue-deployment.yml --resource-group AI-ML_RG --workspace-name aml-workspace
            az ml online-endpoint update --file ./src/kubernetes-blue-endpoint-update.yml --resource-group AI-ML_RG --workspace-name aml-workspace
     - name: Create an Online Deployment Blue
-      if: ${{env.TRAFFIC.green}} == 100
+      if: ${{env.GREEN}} == 100
       run: |
            az ml online-deployment create --file ./src/kubernetes-blue-deployment.yml --resource-group AI-ML_RG --workspace-name aml-workspace
            az ml online-endpoint update --file ./src/kubernetes-blue-endpoint-update.yml --resource-group AI-ML_RG --workspace-name aml-workspace
     - name: Create an Online Deployment Green
-      if: ${{env.TRAFFIC.blue}} == 100
+      if: ${{env.BLUE}} == 100
       run: |
            az ml online-deployment create --file ./src/kubernetes-green-deployment.yml --resource-group AI-ML_RG --workspace-name aml-workspace
            az ml online-endpoint update --file ./src/kubernetes-green-endpoint-update.yml --resource-group AI-ML_RG --workspace-name aml-workspace
     - name: Delete Deployment Blue
-      if: ${{env.TRAFFIC.green}} == 100
+      if: ${{env.GREEN}} == 100
       run: az ml online-deployment delete --endpoint-name aks-mlops-endpoint --name blue --resource-group AI-ML_RG --workspace-name aml-workspace --yes
     - name: Delete Deployment Green
-      if: ${{env.TRAFFIC.blue}} == 100
+      if: ${{env.BLUE}} == 100
       run: az ml online-deployment delete --endpoint-name aks-mlops-endpoint --name green --resource-group AI-ML_RG --workspace-name aml-workspace --yes
