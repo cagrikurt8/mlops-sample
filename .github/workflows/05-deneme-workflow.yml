@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  login:
+  train:
     runs-on: ubuntu-latest
     steps:
     - name: Check out repo
@@ -13,10 +13,6 @@ jobs:
       run: az extension add -n ml -y
     - name: Azure login
       run: az login --service-principal -u ${{secrets.AZURE_CLIENT_ID}} -p ${{secrets.AZURE_CLIENT_PASSWORD}} --tenant ${{secrets.AZURE_TENANT_ID}}
-
-  train:
-    runs-on: ubuntu-latest
-    steps:
     - name: Workspace Show
       id: workspace-output
       run: az ml workspace show --name aml-workspace --resource-group AI-ML_RG > at.json
