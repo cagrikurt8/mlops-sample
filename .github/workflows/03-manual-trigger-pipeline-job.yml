@@ -14,12 +14,12 @@ jobs:
     - name: Azure login
       run: az login --service-principal -u ${{secrets.AZURE_CLIENT_ID}} -p ${{secrets.AZURE_CLIENT_PASSWORD}} --tenant ${{secrets.AZURE_TENANT_ID}}
     - name: Register dataset
-      run: az ml data create --file ./src/data.yml --resource-group AI-ML_RG --workspace-name ml-workspace
+      run: az ml data create --file ./src/data.yml --resource-group AI-ML_RG --workspace-name aml-workspace
     - name: Test Data and Submit a Machine Learning Job
-      run: az ml job create --file ./src/job-pipeline.yml --resource-group AI-ML_RG --workspace-name ml-workspace --stream -s
+      run: az ml job create --file ./src/job-pipeline.yml --resource-group AI-ML_RG --workspace-name aml-workspace --stream -s
     - name: Create an Online Endpoint
       id: online-endpoint
-      run: az ml online-endpoint create --file ./src/kubernetes-endpoint.yml --resource-group AI-ML_RG --workspace-name ml-workspace
+      run: az ml online-endpoint create --file ./src/kubernetes-endpoint.yml --resource-group AI-ML_RG --workspace-name aml-workspace
       continue-on-error: true
     - name: Online Endpoint exists print
       if: steps.online-endpoint.outcome == 'failure'
@@ -29,22 +29,22 @@ jobs:
       run: echo "endpoint created"
     - name: Check Deployments
       id: check-deployments
-      run: az ml online-endpoint show --name aks-mlops-endpoint --resource-group AI-ML_RG --workspace-name ml-workspace
+      run: az ml online-endpoint show --name aks-mlops-endpoint --resource-group AI-ML_RG --workspace-name aml-workspace
     - name: Create an Online Deployment Blue
       if: steps.check-deployments.outputs.traffic.green == 100
-      run: az ml online-deployment create --file ./src/kubernetes-blue-deployment.yml --resource-group AI-ML_RG --workspace-name ml-workspace
+      run: az ml online-deployment create --file ./src/kubernetes-blue-deployment.yml --resource-group AI-ML_RG --workspace-name aml-workspace
     - name: Update the traffic Blue
       if: steps.check-deployments.outputs.traffic.green == 100
-      run: az ml online-endpoint update --file ./src/kubernetes-blue-endpoint-update.yml --resource-group AI-ML_RG --workspace-name ml-workspace
+      run: az ml online-endpoint update --file ./src/kubernetes-blue-endpoint-update.yml --resource-group AI-ML_RG --workspace-name aml-workspace
     - name: Create an Online Deployment Green
       if: steps.check-deployments.outputs.traffic.blue == 100
-      run: az ml online-deployment create --file ./src/kubernetes-green-deployment.yml --resource-group AI-ML_RG --workspace-name ml-workspace
+      run: az ml online-deployment create --file ./src/kubernetes-green-deployment.yml --resource-group AI-ML_RG --workspace-name aml-workspace
     - name: Update the traffic Green
       if: steps.check-deployments.outputs.traffic.blue == 100
-      run: az ml online-endpoint update --file ./src/kubernetes-green-endpoint-update.yml --resource-group AI-ML_RG --workspace-name ml-workspace
+      run: az ml online-endpoint update --file ./src/kubernetes-green-endpoint-update.yml --resource-group AI-ML_RG --workspace-name aml-workspace
     - name: Delete Deployment Blue
       if: steps.check-deployments.outputs.traffic.green == 100
-      run: az ml online-deployment delete --endpoint-name aks-mlops-endpoint --name blue --resource-group AI-ML_RG --workspace-name ml-workspace --yes
+      run: az ml online-deployment delete --endpoint-name aks-mlops-endpoint --name blue --resource-group AI-ML_RG --workspace-name aml-workspace --yes
     - name: Delete Deployment Green
       if: steps.check-deployments.outputs.traffic.blue == 100
-      run: az ml online-deployment delete --endpoint-name aks-mlops-endpoint --name green --resource-group AI-ML_RG --workspace-name ml-workspace --yes
+      run: az ml online-deployment delete --endpoint-name aks-mlops-endpoint --name green --resource-group AI-ML_RG --workspace-name aml-workspace --yes

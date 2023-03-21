@@ -14,10 +14,10 @@ jobs:
     - name: Azure login
       run: az login --service-principal -u ${{secrets.AZURE_CLIENT_ID}} -p ${{secrets.AZURE_CLIENT_PASSWORD}} --tenant ${{secrets.AZURE_TENANT_ID}}
     - name: Submit a Machine Learning Job
-      run: az ml job create --file ./src/job.yml --resource-group AI-ML_RG --workspace-name ml-workspace --stream -s
+      run: az ml job create --file ./src/job.yml --resource-group AI-ML_RG --workspace-name aml-workspace --stream -s
     - name: Create an Online Endpoint
       id: online-endpoint
-      run: az ml online-endpoint create --file ./src/endpoint.yml --resource-group AI-ML_RG --workspace-name ml-workspace
+      run: az ml online-endpoint create --file ./src/endpoint.yml --resource-group AI-ML_RG --workspace-name aml-workspace
       continue-on-error: true
     - name: Online Endpoint exists print
       if: steps.online-endpoint.outcome == 'failure'
@@ -27,10 +27,10 @@ jobs:
       run: echo "endpoint created"
     - name: Create an Online Deployment
       id: online-deployment
-      run: az ml online-deployment create --file ./src/deployment.yml --resource-group AI-ML_RG --workspace-name ml-workspace
+      run: az ml online-deployment create --file ./src/deployment.yml --resource-group AI-ML_RG --workspace-name aml-workspace
       continue-on-error: true
     - name: Update the Online Deployment
       if: steps.online-deployment.outcome == 'failure'
-      run: az ml online-deployment update --file ./src/deployment.yml --resource-group AI-ML_RG --workspace-name ml-workspace
+      run: az ml online-deployment update --file ./src/deployment.yml --resource-group AI-ML_RG --workspace-name aml-workspace
 
 
