@@ -37,14 +37,21 @@ jobs:
             echo "${{ env.BLUE }}"
             echo "${{ env.GREEN }}"
     - name: Create an Online Deployment Blue
+      id: deployment-blue
       if: ${{ (env.GREEN == 100) }}
       run: |
             az ml online-deployment create --file ./src/kubernetes-blue-deployment.yml --resource-group AI-ML_RG --workspace-name aml-workspace
             az ml online-endpoint update --file ./src/kubernetes-blue-endpoint-update.yml --resource-group AI-ML_RG --workspace-name aml-workspace
             az ml online-deployment delete --endpoint-name aks-mlops-endpoint --name green --resource-group AI-ML_RG --workspace-name aml-workspace --yes   
     - name: Create an Online Deployment Green
+      id: deployment-green
       if: ${{ (env.BLUE == 100) }}
       run: |
             az ml online-deployment create --file ./src/kubernetes-green-deployment.yml --resource-group AI-ML_RG --workspace-name aml-workspace
             az ml online-endpoint update --file ./src/kubernetes-green-endpoint-update.yml --resource-group AI-ML_RG --workspace-name aml-workspace
             az ml online-deployment delete --endpoint-name aks-mlops-endpoint --name blue --resource-group AI-ML_RG --workspace-name aml-workspace --yes
+    - name: Create the first Deployment
+      if: steps.deployment-blue.outcome == 'skipped' && steps.deployment-green.outcome == 'skipped'
+      run: |
+            az ml online-deployment create --file ./src/kubernetes-blue-deployment.yml --resource-group AI-ML_RG --workspace-name aml-workspace
+            az ml online-endpoint update --file ./src/kubernetes-blue-endpoint-update.yml --resource-group AI-ML_RG --workspace-name aml-workspace
