@@ -1,0 +1,21 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+#enter name for the component
+name: train_model
+#enter path to your script files
+code: ../src/model
+#use scripts in Python, R, Java, Julia, C#. Here we have shown python
+command: python train.py --training_data ${{inputs.training_data}} --reg_rate ${{inputs.reg_rate}} --model_output ${{outputs.model_output}}
+# invoke completions (Ctrl+Space, Cmd+Space) to see the list of environments available
+environment: azureml:train-env@latest
+# This defines the placeholders for input data. The names of the items in inputs can be referenced in the command
+inputs:
+  training_data:
+    type: uri_folder
+  reg_rate:
+    type: number
+    default: 0.01
+# This defines the placeholders for output data. The names of the items in outputs can be referenced in the command
+outputs:
+  model_output:
+    type: mlflow_model

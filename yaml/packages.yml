@@ -1,0 +1,14 @@
+name: train-env
+channels:
+  - conda-forge
+dependencies:
+- python=3.9
+- pip=21.2.4
+- pip:
+  - mlflow
+  - azureml-mlflow
+  - joblib
+  - scikit-learn
+  - matplotlib
+  - pandas
+  - numpy

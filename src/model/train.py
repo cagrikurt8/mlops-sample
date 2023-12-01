@@ -9,7 +9,7 @@ import pandas as pd
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, roc_auc_score
 
@@ -22,19 +22,13 @@ def main(args):
 
     # read data
     df = get_csvs_df(args.training_data)
-
-    # test data
-    test_data(df)
     
     # split data
     X_train, X_test, y_train, y_test = split_data(df)
 
     # train model
-    train_model(args.reg_rate, X_train, X_test, y_train, y_test)
-
-
-def test_data(df):
-    assert df.columns.tolist() == ["PatientID", "Pregnancies", "PlasmaGlucose", "DiastolicBloodPressure", "TricepsThickness", "SerumInsulin", "BMI", "DiabetesPedigree", "Age", "Diabetic"], "The CSV file doesn't contain the expected columns."
+    model = train_model(args.reg_rate, X_train, X_test, y_train, y_test)
+    mlflow.sklearn.save_model(model, args.model_output)
 
 
 def get_csvs_df(path):
@@ -49,7 +43,6 @@ def get_csvs_df(path):
 # TO DO: add function to split data
 
 def split_data(df):
-    df = df.drop("PatientID", axis=1)
     X, y = df.drop("Diabetic", axis=1).values, df["Diabetic"].values
     
     return train_test_split(X, y, test_size=0.3, random_state=0)
@@ -59,12 +52,14 @@ def train_model(reg_rate, X_train, X_test, y_train, y_test):
     # train model
     
     model = LogisticRegression(C=1/reg_rate, solver="liblinear")
-    pipeline = make_pipeline(MinMaxScaler(), model)
+    pipeline = make_pipeline(StandardScaler(), model)
     pipeline.fit(X_train, y_train)
     y_hat = pipeline.predict(X_test)
     accuracy_score(y_test, y_hat)
     y_scores = pipeline.predict_proba(X_test)
     roc_auc_score(y_test,y_scores[:,1])
+
+    return model
     
 
 def parse_args():
@@ -76,6 +71,8 @@ def parse_args():
                         type=str)
     parser.add_argument("--reg_rate", dest='reg_rate',
                         type=float, default=0.01)
+    parser.add_argument("--model_output", dest='model_output',
+                        type=str)
 
     # parse args
     args = parser.parse_args()

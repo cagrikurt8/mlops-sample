@@ -4,6 +4,7 @@ import argparse
 import glob
 import os
 import pandas as pd
+from pathlib import Path
 
 
 # define functions
@@ -11,6 +12,7 @@ def main(args):
     df = get_csvs_df(args.test_data)
 
     assert df.columns.tolist() == ["PatientID", "Pregnancies", "PlasmaGlucose", "DiastolicBloodPressure", "TricepsThickness", "SerumInsulin", "BMI", "DiabetesPedigree", "Age", "Diabetic"], "The CSV file doesn't contain the expected columns."
+    df.drop("PatientID", axis=1).to_csv((Path(args.output_data) / "diabetes-data.csv"))
 
 
 def get_csvs_df(path):
@@ -28,6 +30,9 @@ def parse_args():
 
     # add arguments
     parser.add_argument("--test_data", dest='test_data',
+                        type=str)
+    
+    parser.add_argument("--output_data", dest="output_data",
                         type=str)
 
     # parse args

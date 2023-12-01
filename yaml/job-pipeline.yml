@@ -1,0 +1,48 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+experiment_name: mlops-diabetes-training
+#display_name: test_data_and_train_model
+
+inputs:
+  input_data:
+    type: uri_folder
+    mode: ro_mount
+    path: azureml:diabetes-data@latest
+outputs:
+  model_output:
+    type: mlflow_model
+    mode: rw_mount
+
+jobs:
+  test_data:
+    type: command
+    component: azureml:test_data@latest
+    compute: azureml:tst-cluster
+    description: Test the train data whether the columns are as expected.
+    display_name: test_data
+    inputs:
+      input_data: 
+        type: uri_folder
+        mode: ro_mount
+        path: ${{parent.inputs.input_data}}
+    outputs:
+      output_data:
+        type: uri_folder
+        mode: rw_mount
+  train_model:
+    type: command
+    component: azureml:train_model@latest
+    compute: azureml:tst-cluster
+    description: Train a LR model with YML
+    display_name: train_model
+    inputs:
+      training_data:
+        type: uri_folder
+        mode: ro_mount
+        path: ${{parent.jobs.test_data.outputs.output_data}}
+      reg_rate: 0.01
+    outputs:
+      model_output:
+        type: mlflow_model
+        mode: rw_mount
+        path: ${{parent.outputs.model_output}}
