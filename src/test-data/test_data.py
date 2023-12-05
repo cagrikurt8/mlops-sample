@@ -9,10 +9,10 @@ from pathlib import Path
 
 # define functions
 def main(args):
-    df = get_csvs_df(args.test_data)
+    df = get_csvs_df(args.input_data)
 
     assert df.columns.tolist() == ["PatientID", "Pregnancies", "PlasmaGlucose", "DiastolicBloodPressure", "TricepsThickness", "SerumInsulin", "BMI", "DiabetesPedigree", "Age", "Diabetic"], "The CSV file doesn't contain the expected columns."
-    df.drop("PatientID", axis=1).to_csv((Path(args.output_data) / "diabetes-data.csv"))
+    df.drop("PatientID", axis=1).to_csv((Path(args.output_data) / "diabetes-data.csv"), index=False)
 
 
 def get_csvs_df(path):
@@ -29,7 +29,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     # add arguments
-    parser.add_argument("--test_data", dest='test_data',
+    parser.add_argument("--input_data", dest='input_data',
                         type=str)
     
     parser.add_argument("--output_data", dest="output_data",
